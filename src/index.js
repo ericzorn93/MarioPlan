@@ -15,12 +15,15 @@ const store = createStore(
   rootReducer,
   compose(
     applyMiddleware(thunk.withExtraArgument({ getFirebase, getFirestore })),
-    reduxFirestore(fbConfig),
-    reactReduxFirebase(fbConfig, { attachAuthIsReady: true })
+    reactReduxFirebase(fbConfig, {
+      userProfile: "users",
+      useFirestoreForProfile: true,
+      attachAuthIsReady: true
+    }),
+    reduxFirestore(fbConfig) // redux bindings for firestore
   )
 );
 
-// Application will not render to the DOM unless Firebase Auth is ready
 store.firebaseAuthIsReady.then(() => {
   ReactDOM.render(
     <Provider store={store}>
@@ -28,6 +31,5 @@ store.firebaseAuthIsReady.then(() => {
     </Provider>,
     document.getElementById("root")
   );
-
   registerServiceWorker();
 });
